@@ -1,3 +1,4 @@
+# Assisted by watsonx Code Assistant
 from ibm_watsonx_orchestrate.agent_builder.tools import tool, ToolPermission
 from ibm_watsonx_orchestrate.run import connections
 from ibm_watsonx_orchestrate.agent_builder.connections import ConnectionType, ExpectedCredentials
