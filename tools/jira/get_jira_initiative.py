@@ -1,11 +1,12 @@
-from ibm_watsonx_orchestrate.agent_builder.tools import tool
-from ibm_watsonx_orchestrate.agent_builder.connections.types import (
-    ConnectionType,
-)
+from ibm_watsonx_orchestrate.agent_builder.tools import tool, ToolPermission
+from ibm_watsonx_orchestrate.run import connections
+from ibm_watsonx_orchestrate.agent_builder.connections import ConnectionType, ExpectedCredentials
 import requests
+from requests.auth import HTTPBasicAuth
 from pydantic import Field, BaseModel
 from typing import List
 
+APP_ID="jira_auth_basic"
 
 class Issue(BaseModel):
     """
@@ -24,26 +25,37 @@ class Issue(BaseModel):
     desired_completion_date: str = Field(..., title="Desired completion date")
     components: List[str] = Field(..., title="Components")
 
-
-@tool(expected_credentials=[{"app_id": "jira_auth_basic", "type": ConnectionType.BASIC_AUTH}])
+@tool(
+    name="get_jira_initiative",
+    description="Get initiative information from jira server based on initiative ID or Key",
+    permission=ToolPermission.READ_ONLY,
+    expected_credentials=[ExpectedCredentials(
+        app_id=APP_ID,
+        type=ConnectionType.BASIC_AUTH
+    )]
+)
 def get_jira_initiative(initiativeid_or_key: str):
     """
-    Fetch initiative information from jira server based on Key, Type or other filters.
-
     :returns: List of initiative detailst including Key, Status, Type, Title, 
               Requestor Name, Brief Summary, Related Link, Business Justification, 
-              Business Value Planned, Desired Completion Date,  and Components list
+              Business Value Planned, Desired Completion Date and Components list
     """
 
+    conn = connections.basic_auth(APP_ID) 
+    base = conn.url.rstrip("/")
+    
     try:
         if initiativeid_or_key:
-            api_url = f"https://jsw.ibm.com/rest/api/2/issue/{initiativeid_or_key}"
+            url=f"{base}/rest/api/2/issue/{initiativeid_or_key}"
         else:
             return "Please provide an issue key or ID"
 
-        response = requests.get(api_url)
-        response.raise_for_status()
-        data = response.json()
+        resp = requests.get(
+            url, 
+            auth=HTTPBasicAuth(conn.username, conn.password)
+        )
+        resp.raise_for_status()
+        data = resp.json()
 
         desired_completion_date = data['fields']['customfield_18404']
         components = []
@@ -78,4 +90,4 @@ def get_jira_initiative(initiativeid_or_key: str):
             desired_completion_date=desired_completion_date,
             components=components).model_dump_json()
     except Exception as e:
-        return {"Exception": str(e)}
+        return {"Error": str(e)}
