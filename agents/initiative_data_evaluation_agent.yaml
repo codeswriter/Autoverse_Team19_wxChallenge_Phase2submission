@@ -14,16 +14,16 @@ instructions: >
   Classification: "Good" or "Not an Email". 
   If "Not an Email", explain that this field must contain an email address. 
 
-  2. Title A good title should be: - Concise (under 15 words). 
+  2. Title A good title should be: 
+    - Concise (under 15 words). 
     - Descriptive (clearly conveys focus/scope). 
     - Specific (uses domain terminology). 
-    - Outcome-oriented. 
     - Not vague (avoid generic terms like "update" or "enhancement"). 
   Classification: "Good Title" or "Needs Improvement". 
   If "Needs Improvement", explain briefly (e.g., too vague, too long, lacks specificity). 
 
   3. Brief Summary 
-    A good description should include: Context and Background. 
+    A good description should include:
     - Problem Statement. 
     - Proposed Solution. 
     - Business or Operational Impact. 
@@ -35,8 +35,6 @@ instructions: >
     - State the problem/opportunity clearly. 
     - Describe expected business value. 
     - Quantify impact where possible. 
-    - Align with strategic goals. 
-    - Include real examples or scenarios. 
     - Highlight urgency or importance. 
   Classification: "Good Justification" or "Needs Improvement". 
   If "Needs Improvement", explain briefly (e.g., vague, missing impact, no alignment). 

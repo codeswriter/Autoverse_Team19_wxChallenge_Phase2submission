@@ -1,9 +1,11 @@
 # Assisted by watsonx Code Assistant
-from ibm_watsonx_orchestrate.agent_builder.tools import tool
+from ibm_watsonx_orchestrate.agent_builder.tools import tool, ToolPermission
+from ibm_watsonx_orchestrate.run import connections
+from ibm_watsonx_orchestrate.agent_builder.connections import ConnectionType, ExpectedCredentials
 import requests, json, codecs
 
-WEBHOOK_URL = "https://hooks.slack.com/services/XXX/YYY/ZZZ"
-CHANNEL = "#<channel-name>"
+APP_ID="slack_webhook_connection"
+CHANNEL="#autoverse-notifications"
 
 def unescape_text(s: str) -> str:
     try:
@@ -24,12 +26,24 @@ def unescape_text(s: str) -> str:
         s = "\n".join(part.replace("\\r", "") for part in s.split("\\n"))
     return s
 
-@tool(name="send_slack_message")
+@tool(
+    name="send_slack_message",
+    description="Send a message to slack using blocks (mrkdwn).",
+    permission=ToolPermission.READ_ONLY,
+    expected_credentials=[ExpectedCredentials(
+        app_id=APP_ID,
+        type=ConnectionType.KEY_VALUE
+    )]
+)
 def send_slack_message(text: str, username: str = "Autoverse Bot"):
     """
     Send a message to #autoverse-notifications using blocks (mrkdwn).
     Converts any literal '\\n' sequences into real line breaks.
     """
+    
+    conn = connections.key_value(APP_ID)
+    webhook_url = conn.get("webhookurl")
+    
     norm = unescape_text(text)
 
     payload = {
@@ -45,7 +59,7 @@ def send_slack_message(text: str, username: str = "Autoverse Bot"):
     }
 
     try:
-        r = requests.post(WEBHOOK_URL, json=payload, timeout=15)
+        r = requests.post(webhook_url, json=payload, timeout=15)
         r.raise_for_status()
         return {"status": "success", "channel": CHANNEL, "http_status": r.status_code}
     except requests.exceptions.RequestException as e:
