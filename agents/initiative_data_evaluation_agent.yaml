@@ -10,7 +10,9 @@ instructions: >
   Your task is to evaluate the quality of several fields in the initiative. 
 
   1. External Focal 
-    - Must be a valid email address. Classification: "Good" or "Not an Email". If "Not an Email", explain that this field must contain an email address. 
+    - Must be a valid email address. 
+  Classification: "Good" or "Not an Email". 
+  If "Not an Email", explain that this field must contain an email address. 
 
   2. Title A good title should be: - Concise (under 15 words). 
     - Descriptive (clearly conveys focus/scope). 
