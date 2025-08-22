@@ -1,0 +1,15 @@
+spec_version: v1
+kind: connection
+app_id: jira_auth_basic
+environments:
+    draft:
+        kind: basic
+        type: member
+        sso: false
+        server_url: https://jsw.ibm.com
+    live:
+        kind: basic
+        type: member
+        sso: false
+        server_url: https://jsw.ibm.com
+        
